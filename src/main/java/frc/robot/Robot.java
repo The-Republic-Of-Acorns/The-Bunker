@@ -19,10 +19,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot extends TimedRobot {
-  private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
-  private String m_autoSelected;
-  private final SendableChooser<String> m_chooser = new SendableChooser<>();
+
+  private SendableChooser<Double> fineControlSpeed = new SendableChooser<>();
+  private SendableChooser<Double> deadBandOptions = new SendableChooser<>();
+  private double fineControlSpeedDouble;
+  private SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
+  private NetworkTable limelight_table = NetworkTableInstance.getDefault().getTable("limelight");
+  private NetworkTableEntry ledStatusEntry = Shuffleboard.getTab("DRIVETRAIN").add("LED Status", "OFF").getEntry();
+  private NetworkTableEntry ll3dEntry = Shuffleboard.getTab("DRIVETRAIN").add("Limelight 3D stuff", new Number[0]).getEntry();
+  private NetworkTableEntry sensorEntry = Shuffleboard.getTab("DEBUG").add("Sensor value", false).getEntry();
+  private NetworkTableEntry ballEntry = Shuffleboard.getTab("DEBUG").add("Ball Count",0).getEntry();
 
   /**
    * This function is run when the robot is first started up and should be
