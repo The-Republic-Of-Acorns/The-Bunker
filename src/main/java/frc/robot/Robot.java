@@ -39,6 +39,16 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+
+    //Format all motor controllers
+    m_leftAft.configFactoryDefault();
+    m_leftFront.configFactoryDefault();
+    m_rightAft.configFactoryDefault();
+    m_rightFront.configFactoryDefault();
+
+
+
+
   }
 
   /**
