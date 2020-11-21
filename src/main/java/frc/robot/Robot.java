@@ -7,11 +7,17 @@
 
 package frc.robot;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import java.text.SimpleDateFormat;
 
 import static frc.robot.RobotMap.*;
 
@@ -44,17 +50,17 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
 
-<<<<<<< HEAD
+<<<<<<< 
 =======
 
->>>>>>> fbf21ab6cb46ad9030c48fd4c2f86b670b385a35
     //Format all motor controllers
     m_leftAft.configFactoryDefault();
+    SpeedController m_leftFront;
     m_leftFront.configFactoryDefault();
     m_rightAft.configFactoryDefault();
     m_rightFront.configFactoryDefault();
 
-<<<<<<< HEAD
+<<<<<<< 
 
 
 =======
@@ -69,7 +75,6 @@ public class Robot extends TimedRobot {
     //Instantiate DifferentialDrive and put it on Shuffleboard
     m_drive = new DifferentialDrive(m_leftFront,m_rightFront);
     Shuffleboard.getTab("DRIVETRAIN").add(m_drive);
->>>>>>> fbf21ab6cb46ad9030c48fd4c2f86b670b385a35
 
   }
 
