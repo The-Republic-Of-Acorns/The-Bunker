@@ -8,8 +8,12 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import static frc.robot.RobotMap.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -39,6 +43,26 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+
+
+    //Format all motor controllers
+    m_leftAft.configFactoryDefault();
+    m_leftFront.configFactoryDefault();
+    m_rightAft.configFactoryDefault();
+    m_rightFront.configFactoryDefault();
+
+    //Config followers
+    m_leftAft.follow(m_leftFront);
+    m_rightAft.follow(m_rightFront);
+
+    //Config inversion
+    m_leftFront.setInverted(false);
+    m_rightFront.setInverted(false);
+
+    //Instantiate DifferentialDrive and put it on Shuffleboard
+    m_drive = new DifferentialDrive(m_leftFront,m_rightFront);
+    Shuffleboard.getTab("DRIVETRAIN").add(m_drive);
+
   }
 
   /**
