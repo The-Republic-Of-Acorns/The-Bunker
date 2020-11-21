@@ -1,8 +1,7 @@
-xpackage frc.robot;
-
+package frc.robot;
 
 <<<<<<< HEAD
-public class RobotMap{
+public class RobotMap {
     /**
      * This is cool.
      */
