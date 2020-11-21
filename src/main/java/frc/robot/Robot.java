@@ -44,13 +44,20 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
 
+<<<<<<< HEAD
+=======
 
+>>>>>>> fbf21ab6cb46ad9030c48fd4c2f86b670b385a35
     //Format all motor controllers
     m_leftAft.configFactoryDefault();
     m_leftFront.configFactoryDefault();
     m_rightAft.configFactoryDefault();
     m_rightFront.configFactoryDefault();
 
+<<<<<<< HEAD
+
+
+=======
     //Config followers
     m_leftAft.follow(m_leftFront);
     m_rightAft.follow(m_rightFront);
@@ -62,6 +69,7 @@ public class Robot extends TimedRobot {
     //Instantiate DifferentialDrive and put it on Shuffleboard
     m_drive = new DifferentialDrive(m_leftFront,m_rightFront);
     Shuffleboard.getTab("DRIVETRAIN").add(m_drive);
+>>>>>>> fbf21ab6cb46ad9030c48fd4c2f86b670b385a35
 
   }
 
