@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.text.SimpleDateFormat;
 
-import static frc.robot.RobotMap.*;
+import static frc.robot.common.RobotMap.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -46,24 +46,16 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
-    SmartDashboard.putData("Auto choices", m_chooser);
 
-<<<<<<< 
-=======
+
 
     //Format all motor controllers
     m_leftAft.configFactoryDefault();
-    SpeedController m_leftFront;
     m_leftFront.configFactoryDefault();
     m_rightAft.configFactoryDefault();
     m_rightFront.configFactoryDefault();
 
-<<<<<<< 
 
-
-=======
     //Config followers
     m_leftAft.follow(m_leftFront);
     m_rightAft.follow(m_rightFront);
@@ -103,9 +95,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autoSelected = m_chooser.getSelected();
+    //m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Auto selected: " + m_autoSelected);
+    //System.out.println("Auto selected: " + m_autoSelected);
   }
 
   /**
@@ -113,7 +105,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    switch (m_autoSelected) {
+    /** switch (m_autoSelected) {
       case kCustomAuto:
         // Put custom auto code here
         break;
@@ -122,6 +114,7 @@ public class Robot extends TimedRobot {
         // Put default auto code here
         break;
     }
+     */
   }
 
   /**
