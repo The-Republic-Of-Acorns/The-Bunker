@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 
 import static frc.robot.common.RobotMap.*;
@@ -45,9 +46,28 @@ public class Robot extends TimedRobot {
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
    */
+
+  private static boolean isReadingBall = false;
+  public static int powerCellCount = 0;
+
+  public static double d; // The distance to the target
+  private static double a2; // The angle from the limelight
+  private static final double a1 = 42; // The angle the limelight is mounted at
+  private static final double h1 = 11.25; // The height the limelight is mounted at
+  private static double h2 = 98.25; // The height of the target
+
+  /**
+   * Configure Victors, SendableChoosers, and initial debug statistics
+   */
+
   @Override
   public void robotInit() {
-
+    File file = new File(Robot.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+    Shuffleboard.getTab("DEBUG").add("Left Aft Drivetrain Firm", m_leftAft.getFirmwareVersion());
+    Shuffleboard.getTab("DEBUG").add("Left Front Drivetrain Firm", m_leftFront.getFirmwareVersion());
+    Shuffleboard.getTab("DEBUG").add("Right Aft Drivetrain Firm", m_rightAft.getFirmwareVersion());
+    Shuffleboard.getTab("DEBUG").add("Right Front Drivetrain Firm", m_rightFront.getFirmwareVersion());
+    Shuffleboard.getTab("DEBUG").add("Last code deploy", sdf.format(file.lastModified()));
 
 
     //Format all motor controllers
@@ -68,6 +88,9 @@ public class Robot extends TimedRobot {
     //Instantiate DifferentialDrive and put it on Shuffleboard
     m_drive = new DifferentialDrive(m_leftFront,m_rightFront);
     Shuffleboard.getTab("DRIVETRAIN").add(m_drive);
+
+    //Put Limelight LED Status to Shuffleboard
+    ledStatusEntry.setString("OFF");
 
     //Fine Control Speed User
     fineControlSpeed.addOption("35% Speed", 0.35);
