@@ -54,8 +54,71 @@ public class Robot extends TimedRobot {
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
    */
+
+  private static boolean isReadingBall = false;
+  public static int powerCellCount = 0;
+
+  public static double d; // The distance to the target
+  private static double a2; // The angle from the limelight
+  private static final double a1 = 42; // The angle the limelight is mounted at
+  private static final double h1 = 11.25; // The height the limelight is mounted at
+  private static double h2 = 98.25; // The height of the target
+
+  /**
+   * Configure Victors, SendableChoosers, and initial debug statistics
+   */
+
   @Override
   public void robotInit() {
+<<<<<<< HEAD
+    File file = new File(Robot.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+    Shuffleboard.getTab("DEBUG").add("Left Aft Drivetrain Firm", m_leftAft.getFirmwareVersion());
+    Shuffleboard.getTab("DEBUG").add("Left Front Drivetrain Firm", m_leftFront.getFirmwareVersion());
+    Shuffleboard.getTab("DEBUG").add("Right Aft Drivetrain Firm", m_rightAft.getFirmwareVersion());
+    Shuffleboard.getTab("DEBUG").add("Right Front Drivetrain Firm", m_rightFront.getFirmwareVersion());
+    Shuffleboard.getTab("DEBUG").add("Last code deploy", sdf.format(file.lastModified()));
+
+
+    //Format all motor controllers
+    m_leftAft.configFactoryDefault();
+    m_leftFront.configFactoryDefault();
+    m_rightAft.configFactoryDefault();
+    m_rightFront.configFactoryDefault();
+
+
+    //Config followers
+    m_leftAft.follow(m_leftFront);
+    m_rightAft.follow(m_rightFront);
+
+    //Config inversion
+    m_leftFront.setInverted(false);
+    m_rightFront.setInverted(false);
+
+    //Instantiate DifferentialDrive and put it on Shuffleboard
+    m_drive = new DifferentialDrive(m_leftFront,m_rightFront);
+    Shuffleboard.getTab("DRIVETRAIN").add(m_drive);
+
+    //Put Limelight LED Status to Shuffleboard
+    ledStatusEntry.setString("OFF");
+
+    //Fine Control Speed User
+    fineControlSpeed.addOption("35% Speed", 0.35);
+    fineControlSpeed.addOption("40% Speed", 0.40);
+    fineControlSpeed.setDefaultOption("45% Speed", 0.45);
+    fineControlSpeed.addOption("50% Speed", 0.50);
+    fineControlSpeed.addOption("55% Speed", 0.55);
+    fineControlSpeed.addOption("60% Speed", 0.60);
+    Shuffleboard.getTab("SETUP").add("Fine Control Speed", fineControlSpeed);
+
+    //Dead Band chooser
+    deadBandOptions.setDefaultOption("5%", 0.05);
+    deadBandOptions.addOption("10%", 0.10);
+    deadBandOptions.addOption("15%", 0.15);
+    Shuffleboard.getTab("SETUP").add("Dead Band", deadBandOptions);
+
+    //Transmits video through cameras
+    CameraServer.getInstance().startAutomaticCapture();
+=======
 
       File file = new File(Robot.class.getProtectionDomain().getCodeSource().getLocation().getPath());
       Shuffleboard.getTab("DEBUG").add("Left Aft Drivetrain Firm", m_leftAft.getFirmwareVersion());
@@ -102,6 +165,7 @@ public class Robot extends TimedRobot {
 
       //Transmits video through cameras
       CameraServer.getInstance().startAutomaticCapture();
+>>>>>>> a886c3bd1806cfe42ab8bc2ade9df1dc39b49b9d
   }
 
   /**
