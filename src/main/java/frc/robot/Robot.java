@@ -11,7 +11,6 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -32,15 +31,24 @@ import static frc.robot.common.RobotMap.*;
  */
 public class Robot extends TimedRobot {
 
-  private SendableChooser<Double> fineControlSpeed = new SendableChooser<>();
-  private SendableChooser<Double> deadBandOptions = new SendableChooser<>();
-  private double fineControlSpeedDouble;
-  private SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
-  private NetworkTable limelight_table = NetworkTableInstance.getDefault().getTable("limelight");
-  private NetworkTableEntry ledStatusEntry = Shuffleboard.getTab("DRIVETRAIN").add("LED Status", "OFF").getEntry();
-  private NetworkTableEntry ll3dEntry = Shuffleboard.getTab("DRIVETRAIN").add("Limelight 3D stuff", new Number[0]).getEntry();
-  private NetworkTableEntry sensorEntry = Shuffleboard.getTab("DEBUG").add("Sensor value", false).getEntry();
-  private NetworkTableEntry ballEntry = Shuffleboard.getTab("DEBUG").add("Ball Count",0).getEntry();
+    private SendableChooser<Double> fineControlSpeed = new SendableChooser<>();
+    private SendableChooser<Double> deadBandOptions = new SendableChooser<>();
+    private double fineControlSpeedDouble;
+    private SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
+    private NetworkTable limelight_table = NetworkTableInstance.getDefault().getTable("limelight");
+    private NetworkTableEntry ledStatusEntry = Shuffleboard.getTab("DRIVETRAIN").add("LED Status", "OFF").getEntry();
+    private NetworkTableEntry ll3dEntry = Shuffleboard.getTab("DRIVETRAIN").add("Limelight 3D stuff", new Number[0]).getEntry();
+    private NetworkTableEntry sensorEntry = Shuffleboard.getTab("DEBUG").add("Sensor value", false).getEntry();
+    private NetworkTableEntry ballEntry = Shuffleboard.getTab("DEBUG").add("Ball Count",0).getEntry();
+
+    private static boolean isReadingBall = false;
+    public static int powerCellCount = 0;
+
+    public static double d; // The distance to the target!
+    private static double a2; // The angle from the limelight
+    private static final double a1 = 42; // The angle the limelight is mounted at
+    private static final double h1 = 11.25; // The height the limelight is mounted at
+    private static final double h2 = 98.25; // The height of the target
 
   /**
    * This function is run when the robot is first started up and should be
@@ -74,6 +82,9 @@ public class Robot extends TimedRobot {
       m_drive = new DifferentialDrive(m_leftFront, m_rightFront);
       Shuffleboard.getTab("DRIVETRAIN").add(m_drive);
 
+      //Put Limelight LED Status to Shuffleboard
+      ledStatusEntry.setString("OFF");
+
       //Fine Control Speed User
       fineControlSpeed.addOption("35% Speed", 0.35);
       fineControlSpeed.addOption("40% Speed", 0.40);
@@ -103,6 +114,25 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+      ll3dEntry.setNumberArray(limelight_table.getEntry("camtran").getNumberArray(new Number[0]));
+      sensorEntry.setBoolean(ballCounter.get());
+      ballEntry.setNumber(powerCellCount);
+
+      if(!ballCounter.get() && !isReadingBall) { //If ball sensor is reading ball being intaked
+          powerCellCount++; //Increase power cell count by one
+          isReadingBall = true; //Prevent reading multiple power cells at once
+      }
+      if(ballCounter.get() && isReadingBall) {
+          isReadingBall = false;
+      }
+
+      if(m_joy.getRawButtonPressed(4)) {
+          powerCellCount = 0;
+      }
+
+      a2 = limelight_table.getEntry("ty").getDouble(0); // Sets a2, the y position of the target
+      d = Math.round((h2-h1) * 12 / Math.tan(Math.toRadians(a1+a2))); // Finds the distance
+      SmartDashboard.putNumber("distance",d);
   }
 
   /**
@@ -118,9 +148,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    //m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    //System.out.println("Auto selected: " + m_autoSelected);
+//    m_autoSelected = m_chooser.getSelected();
+//    m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
+//    System.out.println("Auto selected: " + m_autoSelected);
   }
 
   /**
@@ -128,17 +158,15 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    /** switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
+//     switch (m_autoSelected) {
+//      case kCustomAuto:
+//        // Put custom auto code here
+//        break;
+//      case kDefaultAuto:
+//      default:
+//        // Put default auto code here
+//        break;
     }
-     */
-  }
 
   /**
    * This function is called once when teleop is enabled.
@@ -168,33 +196,35 @@ public class Robot extends TimedRobot {
           //Arcade drive
           m_drive.arcadeDrive(-m_joy.getY(), m_joy.getX());
       }
+      //Limelight LED Control
+      if(m_joy.getRawButtonPressed(5)) {
+          limelight_table.getEntry("ledMode").setNumber(1); //Off
+          ledStatusEntry.setString("OFF");
+      }
+
+      if(m_joy.getRawButtonPressed(6)) {
+          limelight_table.getEntry("ledMode").setNumber(2); //Blink
+          ledStatusEntry.setString("BLINK");
+      }
+
+      if(m_joy.getRawButtonPressed(3)) {
+          limelight_table.getEntry("ledMode").setNumber(3); //On
+          ledStatusEntry.setString("ON");
+      }
+
+      //Limelight Driver Cam Mode
+      if(m_joy.getRawButtonPressed(12)) {
+          limelight_table.getEntry("camMode").setNumber(0); //Vision Processor
+      }
+
+      if(m_joy.getRawButtonPressed(11)) {
+          limelight_table.getEntry("camMode").setNumber(1); //Driver Cam
+      }
   }
 
-  /**
-   * This function is called once when the robot is disabled.
-   */
-  @Override
-  public void disabledInit() {
-  }
-
-  /**
-   * This function is called periodically when disabled.
-   */
-  @Override
-  public void disabledPeriodic() {
-  }
-
-  /**
-   * This function is called once when test mode is enabled.
-   */
-  @Override
-  public void testInit() {
-  }
-
-  /**
-   * This function is called periodically during test mode.
-   */
-  @Override
-  public void testPeriodic() {
+    @Override
+    public void disabledInit() {
+        limelight_table.getEntry("ledMode").setNumber(0); //Reset limelight LEDs after match end
+        ledStatusEntry.setString("OFF");
   }
 }
